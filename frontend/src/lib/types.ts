@@ -26,4 +26,13 @@ export interface PetData {
   hatched_at?: string | null;
   died_at?: string | null;
   death_cause?: string | null;
+  sleep_offset?: number;
+}
+
+/** Check if pet is currently sleeping based on its sleep_offset */
+export function isSleeping(sleepOffset?: number): boolean {
+  if (sleepOffset === undefined) return false;
+  const hour = new Date().getUTCHours();
+  const petHour = (hour + sleepOffset) % 24;
+  return petHour >= 0 && petHour < 6;
 }

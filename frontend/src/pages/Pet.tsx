@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { mockPets, mockInteractions } from "../lib/mock";
 import type { PetData } from "../components/PetCard";
-import { petIdFromSlug } from "../lib/types";
+import { petIdFromSlug, isSleeping } from "../lib/types";
 import StatBar from "../components/StatBar";
 import { isWatched, addToWatchlist, removeFromWatchlist } from "../lib/watchlist";
 
@@ -75,6 +75,7 @@ export default function Pet() {
   if (!pet) return <p className="p-12 text-center text-gray-500">Pet not found.</p>;
 
   const emoji = pet.alive ? (pet.emoji || "🥚") : "💀";
+  const sleeping = pet.alive && isSleeping(pet.sleep_offset);
   const stageBg: Record<string, string> = {
     egg: "from-gray-800 to-gray-900",
     hatchling: "from-yellow-900/30 to-gray-900",
@@ -116,9 +117,14 @@ export default function Pet() {
 
         {/* Emoji showcase */}
         <div className="flex flex-col items-center px-6 pt-4 pb-4">
-          <span className="text-6xl drop-shadow-lg sm:text-8xl">{emoji}</span>
+          <span className="text-6xl drop-shadow-lg sm:text-8xl">{emoji}{sleeping && " 💤"}</span>
           <h1 className="pixel-font mt-4 text-3xl text-green-400">{pet.name}</h1>
           <p className="mt-1 text-sm uppercase tracking-widest text-gray-500">{pet.species}</p>
+          {sleeping && (
+            <span className="mt-2 rounded bg-indigo-900 px-3 py-1 text-sm text-indigo-300">
+              Currently sleeping
+            </span>
+          )}
           {pet.bio && <p className="mt-2 text-center text-sm italic text-gray-500">"{pet.bio}"</p>}
         </div>
 
@@ -144,7 +150,9 @@ export default function Pet() {
           </div>
           <div className="rounded bg-gray-800/60 px-3 py-2 text-center">
             <p className="text-xs uppercase text-gray-500">Status</p>
-            <p className={`text-sm font-medium ${pet.alive ? "text-green-400" : "text-red-400"}`}>{pet.alive ? "Alive" : "Dead"}</p>
+            <p className={`text-sm font-medium ${!pet.alive ? "text-red-400" : sleeping ? "text-indigo-400" : "text-green-400"}`}>
+              {!pet.alive ? "Dead" : sleeping ? "Sleeping" : "Awake"}
+            </p>
           </div>
         </div>
 
