@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Courier New", monospace;
+  background-color: #030712;
+  color: #f3f4f6;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.pixel-font {
+  font-family: "Press Start 2P", cursive;
+}
+
+.hero-pet-pulse {
+  animation: pet-pulse 3s ease-in-out infinite;
+}
+
+@keyframes pet-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 4px;
+}
