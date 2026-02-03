@@ -1,6 +1,7 @@
 import { corsResponse, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import { getServiceClient, authenticateAgent, hashApiKey } from "../_shared/auth.ts";
 import { parseAdopt } from "../_shared/validate.ts";
+import { generateSleepOffset } from "../_shared/sleep.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse(req);
@@ -90,8 +91,8 @@ Deno.serve(async (req) => {
 
   const { data: pet, error: petErr } = await supabase
     .from("pets")
-    .insert({ agent_id: agent.id, name: pet_name, bio, species, emoji, hunger: 100, happiness: 100, health: 100 })
-    .select("id, name, bio, species, emoji, stage, hunger, happiness, health")
+    .insert({ agent_id: agent.id, name: pet_name, bio, species, emoji, hunger: 100, happiness: 100, health: 100, sleep_offset: generateSleepOffset() })
+    .select("id, name, bio, species, emoji, stage, hunger, happiness, health, sleep_offset")
     .single();
 
   if (petErr) return errorResponse("Failed to create pet", 500, req);

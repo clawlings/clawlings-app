@@ -1,6 +1,7 @@
 import { corsResponse, jsonResponse, errorResponse } from "../_shared/cors.ts";
 import { authenticateAgent, getServiceClient } from "../_shared/auth.ts";
 import { parseAction } from "../_shared/validate.ts";
+import { isSleeping } from "../_shared/sleep.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return corsResponse(req);
@@ -34,6 +35,7 @@ Deno.serve(async (req) => {
 
   if (error || !pet) return errorResponse("Pet not found or not owned by you", 404, req);
   if (!pet.alive) return errorResponse("Pet is dead", 400, req);
+  if (isSleeping(pet.sleep_offset)) return errorResponse("Pet is sleeping", 400, req);
 
   const { data: last } = await supabase
     .from("interactions")
